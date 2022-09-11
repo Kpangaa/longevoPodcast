@@ -1,5 +1,6 @@
 export const primaryBlack = '#000000';
 export const primaryWhite = '#FFFFFF';
+export const primaryBlue = '#0F0F2D';
 
 export const opacityBlack05 = `${primaryBlack}0D`;
 export const opacityBlack20 = `${primaryBlack}32`;
@@ -12,6 +13,9 @@ export const opacityWhite12 = `${primaryWhite}1F`;
 export const opacityWhite00 = `${primaryWhite}00`;
 
 export const primaryBlueCrossDark = '#263144';
+export const primaryWarningLight = '#FEF4E5';
+export const primaryErrorDark = '#FD0658';
+export const primaryErrorLight = '#FFE6EE';
 export const secondaryYellowDark = '#FFC738';
 export const secondaryRedDark = '#FE5E5E';
 
