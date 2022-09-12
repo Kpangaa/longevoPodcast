@@ -5,10 +5,15 @@ import imgPrueba from '../../assets/icons/imgPrueba.png';
 import icArrowRight from '../../assets/icons/icArrowRight.svg';
 import {IconSize} from '../Icon/constants';
 import styled from './styled';
+import BottomSheetBehavior from 'reanimated-bottom-sheet';
 
-const ItemPodcasts = () => {
+interface ItemPodcastsProps {
+  sheetRef?: React.RefObject<BottomSheetBehavior>;
+}
+
+const ItemPodcasts = ({sheetRef}: ItemPodcastsProps) => {
   const handleClick = () => {
-    console.log('Abre el botton sheet');
+    sheetRef?.current?.snapTo(0);
   };
   return (
     <View style={styled.containerItemPodcasts}>
