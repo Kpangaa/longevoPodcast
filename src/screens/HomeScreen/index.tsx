@@ -1,5 +1,5 @@
 /* eslint-disable react-native/no-inline-styles */
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
@@ -7,6 +7,7 @@ import {
   Text,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import styled from './styled';
 import Header from '../../components/Header';
@@ -25,15 +26,32 @@ import icLine from '../../assets/icons/icLine.svg';
 import icClose from '../../assets/icons/icClose.svg';
 import imgDetalle from '../../assets/icons/imgDetalle.png';
 import ItemEpisode from '../../components/ItemEpisode';
+import {
+  PIApiEpisodeInfo,
+  PIApiNewTrending,
+} from '../../interfaces/podcasts.interface';
+import PodcatsService from '../../services/podcats.services';
 
 function HomeScreen() {
   const sheetRef = React.useRef<BottomSheetBehavior>(null);
   const fall = new Animated.Value(1);
-  const renderItem = () => {
-    return <ItemPodcasts sheetRef={sheetRef} />;
+  const [dataTrending, setDataTrending] = useState<PIApiNewTrending[]>([]);
+  const [count, setCount] = useState<number>(10);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [dataEpisode, setDataEpisode] = useState<PIApiEpisodeInfo[]>([]);
+
+  const renderItem = (item: PIApiNewTrending, index: number) => {
+    return (
+      <ItemPodcasts
+        key={index}
+        sheetRef={sheetRef}
+        data={item}
+        setDataEpisode={setDataEpisode}
+      />
+    );
   };
-  const renderItemEpisode = () => {
-    return <ItemEpisode />;
+  const renderItemEpisode = (item: PIApiEpisodeInfo, index: number) => {
+    return <ItemEpisode key={index} data={item} />;
   };
   const handleClick = () => {
     console.log('Cierra el boton sheet');
@@ -103,12 +121,39 @@ function HomeScreen() {
           </Text>
         </View>
         <FlatList
-          data={new Array(50).fill('')}
-          renderItem={renderItemEpisode}
+          data={dataEpisode}
+          renderItem={({item, index}) => renderItemEpisode(item, index)}
           contentContainerStyle={styled.body}
+          keyExtractor={(item, index) => index.toString()}
         />
       </View>
     );
+  };
+
+  const loadMoreItem = () => {
+    console.log('more item');
+    setCount(count + 10);
+  };
+
+  useEffect(() => {
+    const getData = async () => {
+      setIsLoading(true);
+      const response = await PodcatsService.findAll(count);
+      if (response?.status === 'true') {
+        setDataTrending([...dataTrending, ...response?.feeds]);
+      }
+      setIsLoading(false);
+    };
+    getData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [count]);
+
+  const renderLoader = () => {
+    return isLoading ? (
+      <View style={styled.loaderStyle}>
+        <ActivityIndicator size={'large'} color={'#aaa'} />
+      </View>
+    ) : null;
   };
   return (
     <SafeAreaView style={styled.wrapperContainerHome}>
@@ -134,10 +179,13 @@ function HomeScreen() {
           />
         </View>
         <FlatList
-          data={new Array(50).fill('')}
-          renderItem={renderItem}
-          keyExtractor={(i, a) => a.toString()}
+          data={dataTrending}
+          renderItem={({item, index}) => renderItem(item, index)}
+          keyExtractor={(item, index) => index.toString()}
           style={{marginHorizontal: 30}}
+          ListFooterComponent={renderLoader}
+          onEndReached={loadMoreItem}
+          onEndReachedThreshold={0}
         />
       </View>
       <Reproductor />

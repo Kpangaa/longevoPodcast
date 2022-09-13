@@ -85,4 +85,8 @@ export default StyleSheet.create({
     paddingVertical: 4,
     // backgroundColor: 'pink',
   },
+  loaderStyle: {
+    marginVertical: 12,
+    alignItems: 'center',
+  },
 });

@@ -7,16 +7,33 @@ import {IconSize} from '../Icon/constants';
 import Icon from '../Icon';
 import styled from './styled';
 import Separator from '../Separator';
+import {PIApiEpisodeInfo} from '../../interfaces/podcasts.interface';
 
-function ItemEpisode() {
+interface ItemEpisodeProps {
+  data: PIApiEpisodeInfo;
+}
+
+function ItemEpisode({data}: ItemEpisodeProps) {
   const [play, setPlay] = React.useState(true);
   return (
     <View style={styled.wrapperContainer}>
       <View style={styled.containerItemEpisode}>
-        <Image source={imgPrueba} style={styled.image} />
+        <Image
+          source={
+            data.image
+              ? {
+                  uri: data.image,
+                }
+              : imgPrueba
+          }
+          resizeMode="contain"
+          style={styled.image}
+        />
         <View style={styled.containerItemText}>
-          <Text style={styled.title}>884 - Find Pennang</Text>
-          <Text style={styled.subTitle}>45 mins</Text>
+          <Text style={styled.title}>{data.title.substring(0, 30)}</Text>
+          <Text style={styled.subTitle}>
+            {(data.duration / 60).toString().substring(0, 4) + ' mins'}
+          </Text>
         </View>
         <TouchableOpacity
           onPress={() => setPlay(!play)}
