@@ -40,4 +40,9 @@ export default StyleSheet.create({
     lineHeight: 14,
     color: primaryBlack,
   },
+  imageContainer: {
+    width: 78,
+    height: 82,
+    borderRadius: 12,
+  },
 });
