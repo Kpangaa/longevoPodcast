@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
 import {View, Image, Text, TouchableOpacity} from 'react-native';
 import Icon from '../Icon';
@@ -28,7 +29,7 @@ const ItemPodcasts = ({
 }: ItemPodcastsProps) => {
   const handleClick = async () => {
     const episode = await PodcatsService.findById(data.id);
-    console.log('episode: ', episode?.count);
+    console.log('episode: ', episode?.items);
     setDataEpisode(episode?.items!);
     setDataFeed(data);
     sheetRef?.current?.snapTo(0);
@@ -47,7 +48,9 @@ const ItemPodcasts = ({
         <Text style={styled.subTitle}>
           {data.description.substring(0, 60) + ' ...'}
         </Text>
-        <Text style={styled.textEpisode}>844 Episodios</Text>
+        <Text style={styled.textEpisode}>
+          {Math.floor(Math.random() * (100 - 10 + 1) + 10)} Episodios
+        </Text>
       </View>
       <TouchableOpacity onPress={handleClick}>
         <Icon source={icArrowRight} size={IconSize.SMALL} />

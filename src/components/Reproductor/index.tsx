@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useState} from 'react';
 import {View, Text, Image, TouchableOpacity} from 'react-native';
@@ -10,7 +11,11 @@ import icPause from '../../assets/icons/icPause.svg';
 import icPlay from '../../assets/icons/icPlay.svg';
 import {IconSize} from '../Icon/constants';
 
-function Reproductor() {
+interface ReproductorProps {
+  data?: any;
+}
+
+function Reproductor({data}: ReproductorProps) {
   const [play, setPlay] = useState(false);
   return (
     <View style={styled.containerReproductor}>
