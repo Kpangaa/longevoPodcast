@@ -1,35 +1,27 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
 import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
   View,
-  Text,
-  Image,
-  TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
 import styled from './styled';
 import Header from '../../components/Header';
 import Label from '../../components/Label';
-import {primaryBlack, primaryBlue, primaryWhite} from '../../theme/colors';
+import {primaryBlack} from '../../theme/colors';
 import icStart from '../../assets/icons/icStart.svg';
 import ItemPodcasts from '../../components/ItemPodcasts';
 import Reproductor from '../../components/Reproductor';
-import Icon from '../../components/Icon';
-import {IconSize} from '../../components/Icon/constants';
 import Animated from 'react-native-reanimated';
-import icStartEmpty from '../../assets/icons/icStartEmpty.svg';
-import icLine from '../../assets/icons/icLine.svg';
-import icClose from '../../assets/icons/icClose.svg';
-import imgDetalle from '../../assets/icons/imgDetalle.png';
-import ItemEpisode from '../../components/ItemEpisode';
 import {
   PIApiEpisodeInfo,
   PIApiNewTrending,
 } from '../../interfaces/podcasts.interface';
 import PodcatsService from '../../services/podcats.services';
 import BottomSheetBehavior from 'reanimated-bottom-sheet';
+import DetailScreen from '../DetailScreen';
 
 function HomeScreen() {
   const sheetRef = React.useRef<BottomSheetBehavior>(null);
@@ -51,9 +43,7 @@ function HomeScreen() {
       />
     );
   };
-  const renderItemEpisode = (item: PIApiEpisodeInfo, index: number) => {
-    return <ItemEpisode key={index} data={item} />;
-  };
+
   const handleClick = () => {
     console.log('Cierra el boton sheet');
     sheetRef?.current?.snapTo(1);
@@ -61,74 +51,7 @@ function HomeScreen() {
 
   const renderContent = () => {
     return (
-      <View
-        style={{
-          backgroundColor: primaryBlue,
-          opacity: 0.93,
-          height: 615,
-          zIndex: 9999,
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
-          position: 'relative',
-        }}>
-        <View style={styled.container}>
-          <View style={styled.containerHeader}>
-            <TouchableOpacity
-              onPress={() => console.log(' FAVORITOS')}
-              style={{}}>
-              <Icon source={icStartEmpty} size={IconSize.REGULAR} />
-            </TouchableOpacity>
-            <View style={{bottom: 10}}>
-              <Icon source={icLine} size={IconSize.LARGE} />
-            </View>
-            <TouchableOpacity onPress={handleClick} style={{}}>
-              <Icon source={icClose} size={IconSize.XSMALL} />
-            </TouchableOpacity>
-          </View>
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
-            <Image
-              source={imgDetalle}
-              style={{
-                height: 160,
-                width: 160,
-              }}
-            />
-            <Text style={styled.titleAuthor}>
-              {dataFeed?.author || 'Penang Hokkien'}
-            </Text>
-          </View>
-          <View
-            style={{
-              paddingHorizontal: 25,
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: 100,
-              bottom: 15,
-              paddingTop: 5,
-              marginBottom: -10,
-            }}>
-            <Text style={styled.subtitle}>
-              {dataFeed?.description ||
-                'Simple header with FlatList Simple header with FlatList Simple header with FlatList Simple header with FlatList Simple header with FlatList Simple header with FlatList'}
-            </Text>
-          </View>
-          <Text
-            style={{
-              color: primaryWhite,
-              fontSize: 20,
-              fontWeight: '700',
-              paddingLeft: 15,
-            }}>
-            47 episodios
-          </Text>
-        </View>
-        <FlatList
-          data={dataEpisode}
-          renderItem={({item, index}) => renderItemEpisode(item, index)}
-          contentContainerStyle={styled.body}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
+      <DetailScreen handleClick={handleClick} dataFeed={dataFeed} dataEpisode={dataEpisode}/>
     );
   };
 
@@ -142,12 +65,11 @@ function HomeScreen() {
       setIsLoading(true);
       const response = await PodcatsService.findAll(count);
       if (response?.status === 'true') {
-        setDataTrending([...dataTrending, ...response?.feeds]);
+        setDataTrending([...response?.feeds]);
       }
       setIsLoading(false);
     };
     getData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [count]);
 
   const renderLoader = () => {
