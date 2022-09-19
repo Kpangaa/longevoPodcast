@@ -8,6 +8,7 @@ import Icon from '../Icon';
 import styled from './styled';
 import Separator from '../Separator';
 import {PIApiEpisodeInfo} from '../../interfaces/podcasts.interface';
+import {toHHMMSS} from '../../utils/formatTime';
 
 interface ItemEpisodeProps {
   data: PIApiEpisodeInfo;
@@ -30,9 +31,10 @@ function ItemEpisode({data}: ItemEpisodeProps) {
           style={styled.image}
         />
         <View style={styled.containerItemText}>
-          <Text style={styled.title}>{data.title.substring(0, 30)}</Text>
+          <Text style={styled.title}>{data.title.substring(0, 45)}</Text>
           <Text style={styled.subTitle}>
-            {(data.duration / 60).toString().substring(0, 4) + ' mins'}
+            {toHHMMSS(data.duration.toString())}
+            {/* {(data.duration / 60).toString().substring(0, 4) + ' mins'} */}
           </Text>
         </View>
         <TouchableOpacity

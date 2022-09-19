@@ -4,24 +4,33 @@ import Icon from '../Icon';
 import icArrowRight from '../../assets/icons/icArrowRight.svg';
 import {IconSize} from '../Icon/constants';
 import styled from './styled';
-import BottomSheetBehavior from 'reanimated-bottom-sheet';
 import {
   PIApiEpisodeInfo,
   PIApiNewTrending,
 } from '../../interfaces/podcasts.interface';
 import PodcatsService from '../../services/podcats.services';
+import BottomSheetBehavior from 'reanimated-bottom-sheet';
 
 interface ItemPodcastsProps {
   sheetRef?: React.RefObject<BottomSheetBehavior>;
   data: PIApiNewTrending;
   setDataEpisode: React.Dispatch<React.SetStateAction<PIApiEpisodeInfo[]>>;
+  setDataFeed: React.Dispatch<
+    React.SetStateAction<PIApiNewTrending | undefined>
+  >;
 }
 
-const ItemPodcasts = ({sheetRef, data, setDataEpisode}: ItemPodcastsProps) => {
+const ItemPodcasts = ({
+  sheetRef,
+  data,
+  setDataEpisode,
+  setDataFeed,
+}: ItemPodcastsProps) => {
   const handleClick = async () => {
     const episode = await PodcatsService.findById(data.id);
     console.log('episode: ', episode?.count);
     setDataEpisode(episode?.items!);
+    setDataFeed(data);
     sheetRef?.current?.snapTo(0);
   };
   return (
