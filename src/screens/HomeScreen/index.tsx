@@ -16,8 +16,6 @@ import {primaryBlack, primaryBlue, primaryWhite} from '../../theme/colors';
 import icStart from '../../assets/icons/icStart.svg';
 import ItemPodcasts from '../../components/ItemPodcasts';
 import Reproductor from '../../components/Reproductor';
-import BottomSheetBehavior from 'reanimated-bottom-sheet';
-import BottomSheet from 'reanimated-bottom-sheet';
 import Icon from '../../components/Icon';
 import {IconSize} from '../../components/Icon/constants';
 import Animated from 'react-native-reanimated';
@@ -31,6 +29,7 @@ import {
   PIApiNewTrending,
 } from '../../interfaces/podcasts.interface';
 import PodcatsService from '../../services/podcats.services';
+import BottomSheetBehavior from 'reanimated-bottom-sheet';
 
 function HomeScreen() {
   const sheetRef = React.useRef<BottomSheetBehavior>(null);
@@ -39,6 +38,7 @@ function HomeScreen() {
   const [count, setCount] = useState<number>(10);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataEpisode, setDataEpisode] = useState<PIApiEpisodeInfo[]>([]);
+  const [dataFeed, setDataFeed] = useState<PIApiNewTrending>();
 
   const renderItem = (item: PIApiNewTrending, index: number) => {
     return (
@@ -47,6 +47,7 @@ function HomeScreen() {
         sheetRef={sheetRef}
         data={item}
         setDataEpisode={setDataEpisode}
+        setDataFeed={setDataFeed}
       />
     );
   };
@@ -64,7 +65,7 @@ function HomeScreen() {
         style={{
           backgroundColor: primaryBlue,
           opacity: 0.93,
-          // height: 615,
+          height: 615,
           zIndex: 9999,
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
@@ -92,7 +93,9 @@ function HomeScreen() {
                 width: 160,
               }}
             />
-            <Text style={styled.titleAuthor}>Penang Hokkien</Text>
+            <Text style={styled.titleAuthor}>
+              {dataFeed?.author || 'Penang Hokkien'}
+            </Text>
           </View>
           <View
             style={{
@@ -105,9 +108,8 @@ function HomeScreen() {
               marginBottom: -10,
             }}>
             <Text style={styled.subtitle}>
-              Simple header with FlatList Simple header with FlatList Simple
-              header with FlatList Simple header with FlatList Simple header
-              with FlatList Simple header with FlatList
+              {dataFeed?.description ||
+                'Simple header with FlatList Simple header with FlatList Simple header with FlatList Simple header with FlatList Simple header with FlatList Simple header with FlatList'}
             </Text>
           </View>
           <Text
@@ -157,7 +159,7 @@ function HomeScreen() {
   };
   return (
     <SafeAreaView style={styled.wrapperContainerHome}>
-      <BottomSheet
+      <BottomSheetBehavior
         ref={sheetRef}
         snapPoints={[730, 0]}
         initialSnap={1}
