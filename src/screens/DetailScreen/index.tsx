@@ -4,12 +4,17 @@ import {FlatList, Image, Text, TouchableOpacity, View} from 'react-native';
 import Icon from '../../components/Icon';
 import {IconSize} from '../../components/Icon/constants';
 import icStartEmpty from '../../assets/icons/icStartEmpty.svg';
+import icStart from '../../assets/icons/icStart.svg';
 import icLine from '../../assets/icons/icLine.svg';
 import icClose from '../../assets/icons/icClose.svg';
 import styled from './styled';
 import ItemEpisode from '../../components/ItemEpisode';
 import {PIApiEpisodeInfo, PIApiNewTrending} from '../../interfaces/podcasts.interface';
 import imgDetalle from '../../assets/icons/imgDetalle.png';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from '../../stateManagement/modules/combineReducers';
+import { addFavoritePodcats, removeFavoritePodcats } from '../../stateManagement/modules/podcatsRedux/actions';
+
 
 interface DetailScreenProps {
   dataEpisode: PIApiEpisodeInfo[];
@@ -22,23 +27,38 @@ export default function DetailScreen({
   handleClick,
   dataFeed,
 }: DetailScreenProps) {
+  const dispatch = useDispatch();
+  const podcats = useSelector((state: RootState) => state.podcats.podcatsArray);
+
   const renderItemEpisode = (item: PIApiEpisodeInfo, index: number) => {
     return <ItemEpisode key={index} data={item} />;
+  };
+
+  const isFavorite = () => {
+    const isFavoritePod = podcats.find((item) => item.id === dataFeed?.id);
+    if (isFavoritePod) {return true;}
+    return false;
+  };
+
+  const handleClickFav = () => {
+    if (isFavorite()){
+      dispatch(removeFavoritePodcats(dataFeed?.id!));
+      return;
+    }
+    dispatch(addFavoritePodcats(dataFeed!));
   };
 
   return (
     <View style={styled.wrapperContainerDetail}>
       <View style={styled.container}>
         <View style={styled.containerHeader}>
-          <TouchableOpacity
-            onPress={() => console.log(' FAVORITOS')}
-            style={{}}>
-            <Icon source={icStartEmpty} size={IconSize.REGULAR} />
+          <TouchableOpacity onPress={() => handleClickFav()}>
+            <Icon source={isFavorite() ? icStart : icStartEmpty} size={IconSize.REGULAR} />
           </TouchableOpacity>
           <View style={styled.iconLeft}>
             <Icon source={icLine} size={IconSize.LARGE} />
           </View>
-          <TouchableOpacity onPress={handleClick} style={{}}>
+          <TouchableOpacity onPress={handleClick}>
             <Icon source={icClose} size={IconSize.XSMALL} />
           </TouchableOpacity>
         </View>

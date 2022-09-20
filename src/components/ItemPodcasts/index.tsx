@@ -11,6 +11,7 @@ import {
 } from '../../interfaces/podcasts.interface';
 import PodcatsService from '../../services/podcats.services';
 import BottomSheetBehavior from 'reanimated-bottom-sheet';
+import imgPrueba from '../../assets/icons/imgPrueba.png';
 
 interface ItemPodcastsProps {
   sheetRef?: React.RefObject<BottomSheetBehavior>;
@@ -29,7 +30,6 @@ const ItemPodcasts = ({
 }: ItemPodcastsProps) => {
   const handleClick = async () => {
     const episode = await PodcatsService.findById(data.id);
-    console.log('episode: ', episode?.items);
     setDataEpisode(episode?.items!);
     setDataFeed(data);
     sheetRef?.current?.snapTo(0);
@@ -37,9 +37,13 @@ const ItemPodcasts = ({
   return (
     <View style={styled.containerItemPodcasts}>
       <Image
-        source={{
-          uri: data.image,
-        }}
+        source={
+          data.image
+            ? {
+                uri: data.image,
+              }
+            : imgPrueba
+        }
         resizeMode="contain"
         style={styled.imageContainer}
       />
