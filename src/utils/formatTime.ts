@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 export const toHHMMSS = (secs: string) => {
   let sec_num = parseInt(secs, 10);
   let hours = Math.floor(sec_num / 3600) % 24;

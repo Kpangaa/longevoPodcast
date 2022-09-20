@@ -48,7 +48,7 @@ const ItemPodcasts = ({
         style={styled.imageContainer}
       />
       <View style={styled.containerItemText}>
-        <Text style={styled.title}>{data.title}</Text>
+        <Text numberOfLines={2} style={styled.title}>{data.title}</Text>
         <Text style={styled.subTitle}>
           {data.description.substring(0, 60) + ' ...'}
         </Text>
