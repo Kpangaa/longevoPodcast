@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import APIClient from '../Config/ApiClient';
 import {ApiResponse} from '../interfaces/podcasts.interface';
 
@@ -12,12 +13,10 @@ const findAll = async (count: number) => {
   }
 };
 const findById = async (id: number) => {
-  console.log('0: ', id);
   try {
     const response = await APIClient.get<ApiResponse.EpisodesByFeedId>(
       `/episodes/byfeedid?id=${id}`,
     );
-    console.log(' LOCURA: ', response.data.count);
     return response.data;
   } catch (error) {
     console.log('error findById: ', error);

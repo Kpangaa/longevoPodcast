@@ -1,17 +1,18 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-native/no-inline-styles */
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   FlatList,
   SafeAreaView,
   View,
   ActivityIndicator,
+  Text,
 } from 'react-native';
 import styled from './styled';
 import Header from '../../components/Header';
 import Label from '../../components/Label';
 import {primaryBlack} from '../../theme/colors';
-import icStart from '../../assets/icons/icStart.svg';
+import icStartHome from '../../assets/icons/icStartHome.svg';
 import ItemPodcasts from '../../components/ItemPodcasts';
 import Reproductor from '../../components/Reproductor';
 import Animated from 'react-native-reanimated';
@@ -22,6 +23,13 @@ import {
 import PodcatsService from '../../services/podcats.services';
 import BottomSheetBehavior from 'reanimated-bottom-sheet';
 import DetailScreen from '../DetailScreen';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../stateManagement/modules/combineReducers';
+
+export enum List {
+  TRENDING = 'Trending',
+  FAVORITE = 'Favoritos',
+}
 
 function HomeScreen() {
   const sheetRef = React.useRef<BottomSheetBehavior>(null);
@@ -31,6 +39,8 @@ function HomeScreen() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dataEpisode, setDataEpisode] = useState<PIApiEpisodeInfo[]>([]);
   const [dataFeed, setDataFeed] = useState<PIApiNewTrending>();
+  const [isShowList, setIsShowList] = useState(List.TRENDING);
+  const podcatsFavorite = useSelector((state: RootState) => state.podcats.podcatsArray);
 
   const renderItem = (item: PIApiNewTrending, index: number) => {
     return (
@@ -44,10 +54,9 @@ function HomeScreen() {
     );
   };
 
-  const handleClick = () => {
-    console.log('Cierra el boton sheet');
+  const handleClick = useCallback(() => {
     sheetRef?.current?.snapTo(1);
-  };
+  }, [sheetRef]);
 
   const renderContent = () => {
     return (
@@ -55,10 +64,9 @@ function HomeScreen() {
     );
   };
 
-  const loadMoreItem = () => {
-    console.log('more item');
+  const loadMoreItem = useCallback(() => {
     setCount(count + 10);
-  };
+  },[count]);
 
   useEffect(() => {
     const getData = async () => {
@@ -79,6 +87,7 @@ function HomeScreen() {
       </View>
     ) : null;
   };
+
   return (
     <SafeAreaView style={styled.wrapperContainerHome}>
       <BottomSheetBehavior
@@ -92,25 +101,42 @@ function HomeScreen() {
       <View style={styled.containerHome}>
         <Header />
         <View style={styled.containerLabel}>
-          <Label title="Trending" backgroundColor={primaryBlack} />
+          <Label title="Trending" backgroundColor={primaryBlack} setIsShowList={setIsShowList} />
           <Label
             title="Favoritos"
             textColor={primaryBlack}
             iconLeft
-            icon={icStart}
+            icon={icStartHome}
             componentRight
-            count={12}
+            count={podcatsFavorite.length}
+            setIsShowList={setIsShowList}
           />
         </View>
-        <FlatList
-          data={dataTrending}
-          renderItem={({item, index}) => renderItem(item, index)}
-          keyExtractor={(item, index) => index.toString()}
-          style={{marginHorizontal: 30}}
-          ListFooterComponent={renderLoader}
-          onEndReached={loadMoreItem}
-          onEndReachedThreshold={0}
-        />
+        {isShowList === List.TRENDING ?
+          <FlatList
+            data={dataTrending}
+            renderItem={({item, index}) => renderItem(item, index)}
+            keyExtractor={(item, index) => index.toString()}
+            style={{marginHorizontal: 30}}
+            ListFooterComponent={renderLoader}
+            ListEmptyComponent={() => {
+              return (<View><Text>NO HAY PODCATS</Text></View>);
+            }}
+            onEndReached={loadMoreItem}
+            onEndReachedThreshold={0}
+          />
+          :
+          <FlatList
+            data={podcatsFavorite}
+            renderItem={({item, index}) => renderItem(item, index)}
+            keyExtractor={(item, index) => index.toString()}
+            style={{marginHorizontal: 30}}
+            ListFooterComponent={renderLoader}
+            ListEmptyComponent={() => {
+              return (<View><Text>NO HAY PODCATS FAVORITOs</Text></View>);
+            }}
+          />
+      }
       </View>
       <Reproductor />
     </SafeAreaView>

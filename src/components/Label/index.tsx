@@ -1,6 +1,8 @@
+/* eslint-disable prettier/prettier */
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text, TouchableOpacity, View} from 'react-native';
 import {SvgProps} from 'react-native-svg';
+import { List } from '../../screens/HomeScreen';
 import {primaryWhite} from '../../theme/colors';
 import Icon from '../Icon';
 import {IconSize} from '../Icon/constants';
@@ -15,6 +17,7 @@ interface LabelProps {
   count?: number;
   textColor?: string;
   backgroundColor?: string;
+  setIsShowList?: any
 }
 
 const Label = ({
@@ -26,9 +29,13 @@ const Label = ({
   count,
   textColor = primaryWhite,
   backgroundColor = primaryWhite,
+  setIsShowList,
 }: LabelProps) => {
+
   return (
-    <View style={[styled.container, {backgroundColor}]}>
+    <TouchableOpacity style={[styled.container, {backgroundColor}]}
+      onPress={() => setIsShowList(title === List.TRENDING ? List.TRENDING : List.FAVORITE)}
+    >
       {iconLeft && (
         <Icon source={icon!} size={IconSize.MSMALL} tintColor={iconTintColor} />
       )}
@@ -38,7 +45,7 @@ const Label = ({
           <Text style={styled.textCount}>{count}</Text>
         </View>
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
